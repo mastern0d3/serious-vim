@@ -22,9 +22,17 @@ let b:cache_directory = $HOME . '/.cache/nvim'
 call plug#begin('~/.local/share/nvim/plugged')
 
 " Make sure you use single quotes
+"Jupyter Support for VIM
+" Plug 'szymonmaszke/vimpyter'
+" autocmd Filetype ipynb nmap <silent><Leader>b :VimpyterInsertPythonBlock<CR>
+" autocmd Filetype ipynb nmap <silent><Leader>i :VimpyterStartJupyter<CR>
+" autocmd Filetype ipynb nmap <silent><Leader>n :VimpyterStartNteract<CR>
 "-------------------------------------------------------------------------------
+"Color Theme
 Plug 'ajmwagar/vim-deus'
+Plug 'arcticicestudio/nord-vim'
 "-------------------------------------------------------------------------------
+Plug 'jceb/vim-orgmode'
 Plug 'junegunn/vim-easy-align'
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
@@ -41,38 +49,42 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 "Enable tabline extension
 let g:airline#extensions#tabline#enabled = 1
-let g:airline#extensions#tabline#left_sep = ' '
+let g:airline#extensions#tabline#left_sep = '|'
 let g:airline#extensions#tabline#left_alt_sep = '|'
 let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 "-------------------------------------------------------------------------------
-function! BuildComposer(info)
-  if a:info.status != 'unchanged' || a:info.force
-    if has('nvim')
-      !cargo build --release
-    else
-      !cargo build --release --no-default-features --features json-rpc
-    endif
-  endif
-endfunction
-
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+" Markdown Composer
+" function! BuildComposer(info)
+"   if a:info.status != 'unchanged' || a:info.force
+"     if has('nvim')
+"       !cargo build --release
+"     else
+"       !cargo build --release --no-default-features --features json-rpc
+"     endif
+"   endif
+" endfunction
+"
+" Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+"         let g:markdown_composer_open_browser = 0
 "-------------------------------------------------------------------------------
 "
 Plug 'ctrlpvim/ctrlp.vim'
       let g:ctrlp_cmd = 'CtrlPMixed' " search anything (in files, buffers and MRU files at the same time.)
       let g:ctrlp_working_path_mode = 'a' " search for nearest ancestor like .git, .hg, and the directory of the current file
       let g:ctrlp_match_window_bottom = 1 " show the match window at the top of the screen
-      let g:ctrlp_by_filename = 1
+      let g:ctrlp_by_filename = 0
       let g:ctrlp_max_height = 10 " maximum height of match window
       let g:ctrlp_switch_buffer = 'et' " jump to a file if it's open already
       let g:ctrlp_use_caching = 1 " enable caching
       let g:ctrlp_cache_dir = b:cache_directory . '/ctrlp' " define cache path
       let g:ctrlp_clear_cache_on_exit = 0 " speed up by not removing clearing cache everytime
       let g:ctrlp_mruf_max = 250 " number of recently opened files
+      let g:ctrlp_show_hidden = 1
 nnoremap <silent> <Leader>p :<C-u>CtrlP<CR><Paste>
 
 Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
+Plug 'junegunn/fzf.vim'
 " A command line fuzzy finder
 
 "-------------------------------------------------------------------------------
@@ -87,6 +99,10 @@ let g:NERDTrimTrailingWhitespace = 1
 let g:NERDSpaceDelims = 1
 " Align line-wise comment delimiters flush left instead of following code indentation
 let g:NERDDefaultAlign = 'left'
+
+"-------------------------------------------------------------------------------
+
+Plug 'goerz/ipynb_notedown.vim' 
 
 "-------------------------------------------------------------------------------
 
@@ -108,13 +124,19 @@ map <silent> <leader>? <Plug>(IPy-Interrupt)
 map <silent> <c-s> <Plug>(IPy-Terminate)
 
 ""---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
-
-Plug 'epeli/slimux'
+" Fix for slimux:
+set shell=/bin/sh
+Plug 'lotabout/slimux'
 "Send text between tmux panes!
 nmap <Leader>s  :SlimuxREPLSendLine<CR>j
 vmap <Leader>s :SlimuxREPLSendSelection<CR>
 map  <C-c><C-c> :SlimuxREPLConfigure<CR>
 
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
+Plug 'vimwiki/vimwiki'
+    set nocompatible
+    filetype plugin on
+    syntax on
 "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
 
 " Initialize plugin system
@@ -142,13 +164,15 @@ set numberwidth=1
 let mapleader=","
 let g:mapleader=","
 " Fast saving with leader + w
-nmap <leader>w :w!<cr>
-" Fast quitting with leader + q
-nmap <leader>q :q<cr>
-" Bring up vimrc for edditing
-nnoremap <leader>ev :e $MYVIMRC<CR>  
+" nmap <leader>w :w!<cr>
+" Quit buffer with leader + q
+nmap <leader>q :bd<cr>
+" Bring up notes for edditing
+nnoremap <leader>en :e ~/Workspace/notes/notes.org<CR>  
 " Force reload vimrc
 nnoremap <leader>rv :source $MYVIMRC<CR>     
+" Bring up vimrc for edditing
+nnoremap <leader>ev :e $MYVIMRC<CR>  
 
 " For copying text out of VIM
 set mouse=a
@@ -156,9 +180,10 @@ set mouse=a
 " Syntax Highlighting
 syntax enable
 
-"set background=dark
+" set background=dark
 "colorscheme solarized
-colors deus
+colorscheme nord
+" colors deus
 
 "Highlight Cursor line
 set cursorline
@@ -211,8 +236,21 @@ vmap <silent> <Leader>v "+p
 " g:airline#extensions#tabline#enabled v 1
 "
 " Cycle tabs 
-nnoremap <silent> <S-k> :bn<CR>
-nnoremap <silent> <S-j> :bp<CR>
+nnoremap <silent> <S-k> :w<CR>:bn<CR>
+nnoremap <silent> <S-j> :w<CR>:bp<CR>
+" Fix Cycle tabs
+" nnoremap <silent> <S-j>  <S-l>
+" nnoremap <silent> <S-l> :w<CR>:bp<CR>
+"
+" nnoremap <silent> <S-k> <S-h>
+" nnoremap <silent> <S-l> :w<CR>:bn<CR>
+
+
+"Maintain cursor and window position when switching buffers
+if v:version >= 700
+  au BufLeave * let b:winview = winsaveview()
+  au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
+endif
 
 "Specify which python to use
 let g:python3_host_prog = '/home/shawn/Software/miniconda3/bin/python'
