@@ -27,6 +27,8 @@ call plug#begin('~/.local/share/nvim/plugged')
 " autocmd Filetype ipynb nmap <silent><Leader>b :VimpyterInsertPythonBlock<CR>
 " autocmd Filetype ipynb nmap <silent><Leader>i :VimpyterStartJupyter<CR>
 " autocmd Filetype ipynb nmap <silent><Leader>n :VimpyterStartNteract<CR>
+Plug 'jeffkreeftmeijer/vim-numbertoggle'
+Plug 'tpope/vim-surround'
 "-------------------------------------------------------------------------------
 "Color Theme
 Plug 'ajmwagar/vim-deus'
@@ -69,9 +71,15 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 "         let g:markdown_composer_open_browser = 0
 "-------------------------------------------------------------------------------
 "
+set wildignore+=*/tmp/*,*.so,*.swp,*.zip,__pycache__/     " MacOSX/Linux<Paste>
 Plug 'ctrlpvim/ctrlp.vim'
+"The below 4 lines are for speed!from https://stackoverflow.com/questions/21346068/slow-performance-on-ctrlp-it-doesnt-work-to-ignore-some-folders/22784889#22784889
+	let g:ctrlp_cache_dir = $HOME . '/.cache/ctrlp'
+	if executable('ag')
+	  let g:ctrlp_user_command = 'ag %s -l --nocolor -g ""'
+	endif
       let g:ctrlp_cmd = 'CtrlPMixed' " search anything (in files, buffers and MRU files at the same time.)
-      let g:ctrlp_working_path_mode = 'a' " search for nearest ancestor like .git, .hg, and the directory of the current file
+      let g:ctrlp_working_path_mode = '' " search for nearest ancestor like .git, .hg, and the directory of the current file
       let g:ctrlp_match_window_bottom = 1 " show the match window at the top of the screen
       let g:ctrlp_by_filename = 0
       let g:ctrlp_max_height = 10 " maximum height of match window
@@ -81,6 +89,16 @@ Plug 'ctrlpvim/ctrlp.vim'
       let g:ctrlp_clear_cache_on_exit = 0 " speed up by not removing clearing cache everytime
       let g:ctrlp_mruf_max = 250 " number of recently opened files
       let g:ctrlp_show_hidden = 1
+	let g:ctrlp_custom_ignore = {
+	  \ 'py':  '__pycache__/',
+	  \ }
+	      " \'py':__pycache__/'
+	      "   'bin'
+	      "   'develop-eggs',
+	      "   'eggs'
+	      "   'parts'
+	      "   'src/*.egg-info'
+	      " set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 nnoremap <silent> <Leader>p :<C-u>CtrlP<CR><Paste>
 
 Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
