@@ -36,7 +36,7 @@ Plug 'arcticicestudio/nord-vim'
 "-------------------------------------------------------------------------------
 Plug 'jceb/vim-orgmode'
 Plug 'junegunn/vim-easy-align'
-Plug 'tpope/vim-fugitive'
+" Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
@@ -149,6 +149,7 @@ Plug 'lotabout/slimux'
 nmap <Leader>s  :SlimuxREPLSendLine<CR>j
 vmap <Leader>s :SlimuxREPLSendSelection<CR>
 map  <C-c><C-c> :SlimuxREPLConfigure<CR>
+let g:slimux_pane_format = "#W #P "
 
 "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
 Plug 'vimwiki/vimwiki'
@@ -185,12 +186,12 @@ let g:mapleader=","
 " nmap <leader>w :w!<cr>
 " Quit buffer with leader + q
 nmap <leader>q :bd<cr>
-" Bring up notes for edditing
-nnoremap <leader>en :e ~/Workspace/notes/notes.org<CR>  
-" Force reload vimrc
-nnoremap <leader>rv :source $MYVIMRC<CR>     
+" Edit system log
+nnoremap <leader>el :e ~/.log/log.org<CR>  
 " Bring up vimrc for edditing
 nnoremap <leader>ev :e $MYVIMRC<CR>  
+" Force reload vimrc
+nnoremap <leader>rv :source $MYVIMRC<CR>     
 
 " For copying text out of VIM
 set mouse=a
