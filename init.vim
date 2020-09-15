@@ -14,12 +14,66 @@
 "                                                       __/ |                                          
 "                                                      |___/                                           
 "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
-" Inspiration From:
+" Originally a fork of:
 " https://github.com/novln/nvim/blob/master/init.vim
 "
+" First and foremost, set the cache directory. This is needed to coordinate
+" plugins.
+"
 let b:cache_directory = $HOME . '/.cache/nvim'
-
+"
+" Plugins are the beauty of vim! Use the awesome plugged plugin manager in
+" neovim.
+"
 call plug#begin('~/.local/share/nvim/plugged')
+" 
+"  Plugins are in ascending chronological order relative to when they were
+"  added to the configuration. 
+"
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
+"
+" FZF Fuzzy Finder! Careful, things are about to get FAAAAASSSTTT
+"
+" A command line fuzzy finder Very powerful
+" 
+Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
+" 
+"
+" This command tells fzf to skip filenames during its :Rg search command.
+"
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
+"
+"
+" Images in vim! Using NeoVim, FZF and termpix.
+"
+" Original inspiration:  to preview image files: https://www.youtube.com/watch?v=vzWibjhLBUs
+" See gist here: https://gist.github.com/LinuxIsCool/457658f5298e4186f23f3731324b68cb
+"
+let g:fzf_layout = { 'down': '~60%' }
+let g:fzf_files_options =
+	    \ '--preview "(~/.cargo/bin/termpix --width 50 --true-color {} || cat {}) 2> /dev/null "'
+
+" Map ctrl-t to bring up fzf fuzzy finder for files
+noremap <silent> <C-t> :Files<CR>
+"
+" Vim Minimap!
+" Very cool concept but it's causing a bit of lag, and it raises an error when
+" I open it. I very well could take a look at the code. I could probably fix
+" that bug and also increase the performance.
+" Also, it would need a way to be controlled, like I need to access that
+" window. It seems like that's actually what's bugging out. 
+" I should probably get back to work. I can probably leave it installed for
+" now, and not use to too often. I'll take a look at the source too.
+Plug 'lleixat/vim-minimap'
+let g:minimap_show='<leader>mm'
+let g:minimap_close='<leader>mc'
+let g:minimap_update='<leader>mu'
+let g:minimap_toggle='<leader>mt'
+" This one seems sketch as well ..
+" Plug 'koron/minimap-vim'
+" No minimap for now. Sept 2020
+" Although, I couls see how the minimap could be super useful. Let's take
+" a look at the code of the original python one.
 
 " Get the dot operator (repeat) functional on plugin commands
 Plug 'tpope/vim-repeat'
@@ -154,9 +208,9 @@ function! BuildComposer(info)
     endif
   endif
 endfunction
-
+"
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-let g:markdown_composer_open_browser = 1
+let g:markdown_composer_open_browser = 0
 "-------------------------------------------------------------------------------
 "
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,__pycache__/     " MacOSX/Linux<Paste>
@@ -187,14 +241,6 @@ Plug 'ctrlpvim/ctrlp.vim'
 	      "   'parts'
 	      "   'src/*.egg-info'
 	      " set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
-nnoremap <silent> <Leader>p :<C-u>CtrlP<CR><Paste>
-
-" A command line fuzzy finder
-" Very powerful
-Plug 'junegunn/fzf.vim'
-Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
-" This command tells fzf to skip filenames during its :Rg search command.
-command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 "-------------------------------------------------------------------------------
 
@@ -238,6 +284,10 @@ let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourse
 map <C-n> :NERDTreeToggle<CR>
 map <leader>r :NERDTreeFind<cr>
 let NERDTreeIgnore=['\.pyc$', '\~$']
+
+" This makes the location of the current open file always the current working
+" directory of vim. Experimental - Sept 15th 2020
+autocmd BufEnter * lcd %:p:h
 
 "-------------------------------------------------------------------------------
 
@@ -298,12 +348,17 @@ set numberwidth=1
 " effect. Use this key in normal mode to run commands through key bindings!
 " * Why do we define it twice? Once with no g, then with a g, what is the
 " difference?
+"
+" Set the leader key - #setleader
 let mapleader=","
 let g:mapleader=","
 
+" I was about to make something bad ass here. It escapes me. It was something
+" about doing something in vim.
+
 " I use this functionallity as close tab
 " * For some reason, leader q and leader w are slow.
-nmap <leader>bd :bd<cr>
+nmap <leader>x :bd<cr>
 
 " Here I make shortcuts to various system locations.
 " ssh config, fish config, vim config, my personal notes,
@@ -364,20 +419,11 @@ set nowrap
 ab h1 hi
 
 " Disable annoying mappings
+" Hmm.. Better look into this. I should at least know the consequences.
 noremap  <silent> <C-c>  <Nop>
 noremap  <silent> <C-w>f <Nop>
 noremap  <silent> <Del>  <Nop>
 noremap  <silent> <F1>   <Nop>
-
-" [c] Copy selection in clipboard
-vmap <silent> <Leader>c "+y
-
-" [x] Cut selection in clipboard
-vmap <silent> <Leader>x "+d
-
-" [v] Paste content from clipboard
-nmap <silent> <Leader>v "+p
-vmap <silent> <Leader>v "+p
 
 " Make buffer movement similar to vimium/vimfx for firefox using let
 " g:airline#extensions#tabline#enabled v 1
@@ -385,8 +431,13 @@ vmap <silent> <Leader>v "+p
 " Cycle tabs 
 " Don't fuckin save, it makes things slow, wish I changed this
 " earlier...(removing save - Sept 12 2020)
-nnoremap <silent> <S-k> :bn<CR>
-nnoremap <silent> <S-j> :bp<CR>
+" I've been mixing up the terminology of tabs and windows.
+" A Buffer is what's drawn on the screen
+" A window is a view of particular text
+" A tab page is a utility for organizing multiple windows
+nnoremap <silent> <S-k> :bn<CR>:NERDTreeFind<CR><C-w>l
+nnoremap <silent> <S-j> :bp<CR>:NERDTreeFind<CR><C-w>l
+" noremap <C-t> :tabnew split<CR>
 " Let's shuffle windows just as easy. Then we can get into nerd tree smoother
 " Whatabout shift n and shift p to cycle tabs?
 " What do shipt p and shift n do?
