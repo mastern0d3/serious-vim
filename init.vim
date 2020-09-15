@@ -21,7 +21,80 @@ let b:cache_directory = $HOME . '/.cache/nvim'
 
 call plug#begin('~/.local/share/nvim/plugged')
 
+" Get the dot operator (repeat) functional on plugin commands
+Plug 'tpope/vim-repeat'
+" A collection of symetric commands shortcuts the use [ and  ] as access keys.
+Plug 'tpope/vim-unimpaired'
+
+" This one has a lot of potential. 95 contributors on github, and it's 83%
+" python
+Plug 'Shougo/denite.nvim'
+
+" ES2015 code snippets (Optional)
+" Plug 'epilande/vim-es2015-snippets'
+
+" React code snippets
+" Plug 'epilande/vim-react-snippets'
+
+" Ultisnips
+" Plug 'SirVer/ultisnips'
+
+" Snippets are separated from the engine. Add this if you want them:
+" Plug 'honza/vim-snippets'
+
+" Plug 'dsznajder/vscode-es7-javascript-react-snippets', {
+      " \ 'do': 'yarn install --frozen-lockfile && yarn compile' }
+
+" Trigger configuration (Optional)
+" let g:UltiSnipsExpandTrigger="<C-l>"
+"
+" Vimagit inspired by magit for emacs
+Plug 'jreybert/vimagit'
+
+Plug 'jiangmiao/auto-pairs'
+
+Plug 'alvan/vim-closetag'
+let g:closetag_filenames = '*.html,*.xhtml,*.phtml,*.js'
+
+" Polyglot language pack
+Plug 'sheerun/vim-polyglot'
+
+" Show indentation level
+Plug 'Yggdroot/indentLine'
+
+" NeoMake
+Plug 'neomake/neomake'
+
+" COC
+" Javascript configuration from: https://thoughtbot.com/blog/modern-typescript-and-react-development-in-vim
+Plug 'neoclide/coc.nvim', {'branch': 'release'}
+let g:coc_global_extensions = [
+  \ 'coc-tsserver'
+  \ ]
+" if isdirectory('./node_modules') && isdirectory('./node_modules/prettier')
+"   let g:coc_global_extensions += ['coc-prettier']
+" endif
+
+if isdirectory('./node_modules') && isdirectory('./node_modules/eslint')
+  let g:coc_global_extensions += ['coc-eslint']
+endif
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gr <Plug>(coc-references)
+nmap <silent> [g <Plug>(coc-diagnostic-prev)
+nmap <silent> ]g <Plug>(coc-diagnostic-next)
+nmap <leader>do <Plug>(coc-codeaction)
+nmap <leader>rn <Plug>(coc-rename)
+
+Plug 'neoclide/coc-eslint'
+Plug 'neoclide/coc-prettier'
+" Goyo for distraction free editing!
+" And T-shirts!
+Plug 'junegunn/goyo.vim'
+
 " Make sure you use single quotes
+"
+Plug 'tomlion/vim-solidity'
 "Jupyter Support for VIM
 " Plug 'szymonmaszke/vimpyter'
 " autocmd Filetype ipynb nmap <silent><Leader>b :VimpyterInsertPythonBlock<CR>
@@ -31,13 +104,25 @@ Plug 'jeffkreeftmeijer/vim-numbertoggle'
 Plug 'tpope/vim-surround'
 "-------------------------------------------------------------------------------
 "Color Theme
+Plug 'tomasiser/vim-code-dark'
 Plug 'ajmwagar/vim-deus'
 Plug 'arcticicestudio/nord-vim'
 "-------------------------------------------------------------------------------
 Plug 'jceb/vim-orgmode'
+Plug 'tpope/vim-speeddating'
 Plug 'junegunn/vim-easy-align'
-" Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+
+"---------------
+" For Javascript and Typescript
+Plug 'pangloss/vim-javascript'
+Plug 'leafgarland/typescript-vim'
+Plug 'peitalin/vim-jsx-typescript'
+Plug 'styled-components/vim-styled-components', { 'branch': 'main' }
+Plug 'jparise/vim-graphql'
+Plug 'yuezk/vim-js'
+Plug 'maxmellon/vim-jsx-pretty'
 
 " Start interactive EasyAlign in visual mode (e.g. vipga)
 xmap ga <Plug>(EasyAlign)
@@ -46,6 +131,9 @@ xmap ga <Plug>(EasyAlign)
 nmap ga <Plug>(EasyAlign)
 
 "-------------------------------------------------------------------------------
+" Trying out vim lightline as an alternative to vim-airline, sticking with
+" airline.
+" Plug 'itchyny/lightline.vim'
 
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
@@ -57,18 +145,18 @@ let g:airline#extensions#tabline#formatter = 'unique_tail'
 
 "-------------------------------------------------------------------------------
 " Markdown Composer
-" function! BuildComposer(info)
-"   if a:info.status != 'unchanged' || a:info.force
-"     if has('nvim')
-"       !cargo build --release
-"     else
-"       !cargo build --release --no-default-features --features json-rpc
-"     endif
-"   endif
-" endfunction
-"
-" Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-"         let g:markdown_composer_open_browser = 0
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release
+    else
+      !cargo build --release --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+let g:markdown_composer_open_browser = 1
 "-------------------------------------------------------------------------------
 "
 set wildignore+=*/tmp/*,*.so,*.swp,*.zip,__pycache__/     " MacOSX/Linux<Paste>
@@ -101,9 +189,12 @@ Plug 'ctrlpvim/ctrlp.vim'
 	      " set wildignore+=*/tmp/*,*.so,*.swp,*.zip     " MacOSX/Linux
 nnoremap <silent> <Leader>p :<C-u>CtrlP<CR><Paste>
 
-Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
-Plug 'junegunn/fzf.vim'
 " A command line fuzzy finder
+" Very powerful
+Plug 'junegunn/fzf.vim'
+Plug 'junegunn/fzf', { 'dir': '~/Software/fzf', 'do': './install --all' }
+" This command tells fzf to skip filenames during its :Rg search command.
+command! -bang -nargs=* Rg call fzf#vim#grep("rg --column --line-number --no-heading --color=always --smart-case ".shellescape(<q-args>), 1, {'options': '--delimiter : --nth 4..'}, <bang>0)
 
 "-------------------------------------------------------------------------------
 
@@ -123,8 +214,26 @@ let g:NERDDefaultAlign = 'left'
 Plug 'goerz/ipynb_notedown.vim' 
 
 "-------------------------------------------------------------------------------
+" Modified vim start screen
+Plug 'mhinz/vim-startify'
 
-Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " On-demand loading
+Plug 'preservim/nerdtree' |
+            \ Plug 'Xuyuanp/nerdtree-git-plugin' |
+            \ Plug 'ryanoasis/vim-devicons'
+let g:NERDTreeGitStatusIndicatorMapCustom = {
+                \ 'Modified'  :'✹',
+                \ 'Staged'    :'✚',
+                \ 'Untracked' :'✭',
+                \ 'Renamed'   :'➜',
+                \ 'Unmerged'  :'═',
+                \ 'Deleted'   :'✖',
+                \ 'Dirty'     :'✗',
+                \ 'Ignored'   :'☒',
+                \ 'Clean'     :'✔︎',
+                \ 'Unknown'   :'?',
+                \ }
+let g:NERDTreeGitStatusUseNerdFonts = 1 " you should install nerdfonts by yourself. default: 0
+" Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' } " On-demand loading
 ":help NERDTreeOptions
 map <C-n> :NERDTreeToggle<CR>
 map <leader>r :NERDTreeFind<cr>
@@ -161,6 +270,9 @@ Plug 'vimwiki/vimwiki'
 " Initialize plugin system
 call plug#end()
 
+" DVC
+autocmd! BufNewFile,BufRead Dvcfile,*.dvc,dvc.lock setfiletype yaml
+
 "============u============u============u============u============u============u
 " VIM BEHAVIOUR
 " Highlight character at column 80
@@ -178,18 +290,29 @@ set number
 " using only 1 column (and 1 space) while possible
 set numberwidth=1 
 
-" " leader is press comma (,) key
-" " like <leader>w saves the current file
+" Here we map the leader key! This is where things get spicy! The leader key
+" in vim is extremely powerful. Wielded by great mages, it unlocks the ability
+" to cast spells through one's very own fingertips by merely thinking a string
+" of words. Once the energetic vibration of these thoughts pass through the
+" keys into the keyboard, the spell is activated and it's consequences take
+" effect. Use this key in normal mode to run commands through key bindings!
+" * Why do we define it twice? Once with no g, then with a g, what is the
+" difference?
 let mapleader=","
 let g:mapleader=","
-" Fast saving with leader + w
-" nmap <leader>w :w!<cr>
-" Quit buffer with leader + q
-nmap <leader>q :bd<cr>
-" Edit system log
+
+" I use this functionallity as close tab
+" * For some reason, leader q and leader w are slow.
+nmap <leader>bd :bd<cr>
+
+" Here I make shortcuts to various system locations.
+" ssh config, fish config, vim config, my personal notes,
+nnoremap <leader>es :e ~/.ssh/config<CR>  
+nnoremap <leader>ef :e ~/.config/fish/config.fish<CR>  
 nnoremap <leader>el :e ~/.log/log.org<CR>  
-" Bring up vimrc for edditing
+nnoremap <leader>en :e ~/Notes/<CR>  
 nnoremap <leader>ev :e $MYVIMRC<CR>  
+
 " Force reload vimrc
 nnoremap <leader>rv :source $MYVIMRC<CR>     
 
@@ -201,7 +324,12 @@ syntax enable
 
 " set background=dark
 "colorscheme solarized
+set t_Co=256
+set t_ut=
 colorscheme nord
+" colorscheme iceberg
+" colorscheme codedark
+hi Normal guibg=NONE ctermbg=NONE
 " colors deus
 
 "Highlight Cursor line
@@ -255,8 +383,15 @@ vmap <silent> <Leader>v "+p
 " g:airline#extensions#tabline#enabled v 1
 "
 " Cycle tabs 
-nnoremap <silent> <S-k> :w<CR>:bn<CR>
-nnoremap <silent> <S-j> :w<CR>:bp<CR>
+" Don't fuckin save, it makes things slow, wish I changed this
+" earlier...(removing save - Sept 12 2020)
+nnoremap <silent> <S-k> :bn<CR>
+nnoremap <silent> <S-j> :bp<CR>
+" Let's shuffle windows just as easy. Then we can get into nerd tree smoother
+" Whatabout shift n and shift p to cycle tabs?
+" What do shipt p and shift n do?
+" shift p is print behind, and shift n is previous search result.
+" OK, we are not changing the above, they actually match vimium in firefox
 " Fix Cycle tabs
 " nnoremap <silent> <S-j>  <S-l>
 " nnoremap <silent> <S-l> :w<CR>:bp<CR>
@@ -264,6 +399,19 @@ nnoremap <silent> <S-j> :w<CR>:bp<CR>
 " nnoremap <silent> <S-k> <S-h>
 " nnoremap <silent> <S-l> :w<CR>:bn<CR>
 
+" Tab spacing on html
+autocmd Filetype html setlocal ts=2 sw=2 expandtab
+autocmd Filetype djangohtml setlocal ts=2 sw=2 expandtab
+autocmd Filetype css setlocal ts=2 sw=2 expandtab
+autocmd Filetype scss setlocal ts=2 sw=2 expandtab
+autocmd Filetype javascript setlocal ts=2 sw=2 expandtab
+autocmd Filetype json setlocal ts=2 sw=2 expandtab
+autocmd Filetype cpp setlocal ts=2 sw=2 expandtab
+autocmd Filetype c setlocal ts=2 sw=2 expandtab
+autocmd Filetype sh setlocal ts=2 sw=2 expandtab
+autocmd Filetype fish setlocal ts=2 sw=2 expandtab
+autocmd Filetype bash setlocal ts=2 sw=2 expandtab
+autocmd Filetype perl setlocal ts=2 sw=2 expandtab
 
 "Maintain cursor and window position when switching buffers
 if v:version >= 700
@@ -271,8 +419,26 @@ if v:version >= 700
   au BufEnter * if(exists('b:winview')) | call winrestview(b:winview) | endif
 endif
 
+" For COC
+if filereadable(expand("~/.config/nvim/coc.vim"))
+	source ~/.config/nvim/coc.vim
+endif
+
+" When writing a buffer (no delay).
+call neomake#configure#automake('w')
+
+" From Matt Williams
+" use 256 colors when possible
+" if (&term =~? 'mlterm\|xterm\|xterm-256\|screen-256') || has('nvim')
+"     let &t_Co = 256
+"     syntax on
+"     colorscheme nord
+" else
+"     colorscheme jellybeans
+" endif
+
 "Specify which python to use
-let g:python3_host_prog = '/home/shawn/Software/miniconda3/bin/python'
+" let g:python3_host_prog = '/home/shawn/Software/miniconda3/bin/python'
 "---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
 "
 "                          .-""    ""--.
