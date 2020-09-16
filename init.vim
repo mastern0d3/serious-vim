@@ -17,6 +17,13 @@
 " Originally a fork of:
 " https://github.com/novln/nvim/blob/master/init.vim
 "
+" Key shortcuts
+" <C-p> -> ctrl-p
+" <C-n> -> nerdtree toggle
+" ...
+"
+"---------------------------------------------------------------------------------------------------------------------------------------------------------------------------                                                                                                      
+"
 " First and foremost, set the cache directory. This is needed to coordinate
 " plugins.
 "
